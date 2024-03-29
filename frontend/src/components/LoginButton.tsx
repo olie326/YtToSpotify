@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Button } from "@radix-ui/themes";
 
 axios.defaults.withCredentials = true;
 
@@ -25,13 +26,12 @@ export default function LoginButton() {
   }, [redirectUrl]);
 
   return (
-    <button
-      className="btn btn-light"
+    <Button
       onClick={() => {
         auth_redirect();
       }}
     >
       Login to Spotify
-    </button>
+    </Button>
   );
 }

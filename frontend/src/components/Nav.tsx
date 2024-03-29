@@ -1,11 +1,21 @@
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import { Link } from "@radix-ui/themes";
+
 export default function Nav() {
   return (
-    <nav className="navbar navbar-expand-lg">
-      <div className="container-fluid justify-content-end p-2 me-4">
-        <a className="nav-link" href="#">
-          Contact
-        </a>
-      </div>
-    </nav>
+    <div className="flex justify-end">
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <Link href="/login">Contact Me!</Link>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
   );
 }

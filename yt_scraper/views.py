@@ -100,6 +100,7 @@ def create_spotify_playlist(request):
 
     print(user_id)
     name = str(request.data['title'])
+    description = str(request.data['description'])
     print(name)
     playlist_data = {
         'name': name,
@@ -108,6 +109,7 @@ def create_spotify_playlist(request):
     print(json.dumps(playlist_data))
     init_playlist = requests.post(f"https://api.spotify.com/v1/users/{user_id}/playlists", json={
         'name': name,
+        'description': description,
         'public': 'false'
     }, headers={
         'Authorization': request.session['Authorization']

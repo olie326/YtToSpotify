@@ -1,147 +1,119 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import {
+  Button,
+  Container,
+  Flex,
+  Skeleton,
+  TextArea,
+  TextField,
+} from "@radix-ui/themes";
+import DisplayTable from "./SongTable/page";
+import { Song } from "@/hooks/GetSongs";
+
+import { Label } from "./ui/label";
+
+import useDataIds from "@/hooks/useDataIds";
+import { createPlaceholder } from "./SongTable/table_skeleton";
+import portToSpotify, { getSongs } from "@/api/apiConfig";
 
 axios.defaults.withCredentials = true;
 
 export default function SearchBar() {
-  interface Song {
-    song_name: string;
-    url: string;
-    artist_name: string;
-    uri: string;
-  }
-
   const queryRef = useRef<HTMLInputElement>(null);
 
-  const [state, setState] = useState<Song[]>([]);
+  const placeholder_data = createPlaceholder();
+
+  const [songs, setSongs] = useState<Song[]>(placeholder_data);
   const [title, setTitle] = useState("");
-  const titleRef = useRef<HTMLInputElement>(null);
-  // const descritRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState<boolean | null>(null);
+
+  const dataIds = useDataIds(songs);
+  const descriptRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setSongs(placeholder_data);
 
-    axios
-      .post("http://127.0.0.1:8000/playlist/getPlaylist", {
-        url: queryRef.current?.value,
-      })
-      .then((response) => {
-        console.log(response);
-        const data = response.data;
-        const songs: Song[] = [];
-
-        Object.keys(data).forEach((key) => {
-          if (key.startsWith("song") && data[key].length > 0) {
-            const query_title = data.query[key].song_title;
-            const current_title = data[key].find((item: any) => {
-              item.name.includes(query_title);
-            });
-
-            const current_item = current_title || data[key][0];
-
-            const album = current_item.album;
-            const imageUrl = album.images[1]?.url || ""; // Provide a default value if url is undefined
-            const artistName = album.artists[0]?.name || ""; // Provide a default value if name is undefined
-            const songName = current_item.name;
-            const uri = current_item.uri;
-            songs.push({
-              song_name: songName,
-              url: imageUrl,
-              artist_name: artistName,
-              uri: uri,
-            });
-          }
-        });
-
-        setTitle(data.title);
-        setState(songs);
-      });
+    const [title, songs] = await getSongs(queryRef.current?.value);
+    console.log(title);
+    setTitle(title);
+    setSongs(songs);
+    setLoading(false);
   };
 
-  const all_songs = state.map((item) => {
-    return (
-      <li className="list-group-item">
-        <div className="row text-start align-items-center p-1">
-          <img
-            className="col-2 object-fit-contain p-0 pe-2"
-            src={item.url}
-            alt=""
-          />
-          <h3 className="col fs-6 m-0 ps-0">{item.song_name}</h3>
-          <h3 className="col-4 fs-6 m-0 d-none d-sm-block">
-            {item.artist_name}
-          </h3>
-          {/* <button type="button" className="btn-close col-1 p-4"></button> */}
-        </div>
-      </li>
-    );
-  });
-
-  function options_column() {
-    if (state.length > 0) {
+  function PortToSpotify() {
+    if (songs.length > 0) {
       return (
-        <ul className="list-group col-4 d-none d-md-block">
-          <button
+        <div className="mt-2">
+          <Button
             className="btn btn-success mb-2"
-            onClick={portToSpotify}
+            onClick={() =>
+              portToSpotify(title, descriptRef.current?.value, dataIds)
+            }
             style={{ width: "100%" }}
           >
             Port to Spotify
-          </button>
-          <div className="input-group">
-            <textarea
-              name="description"
-              id="description"
-              className="form-control"
-              placeholder="Write your description in here!"
-            ></textarea>
-          </div>
-        </ul>
+          </Button>
+        </div>
       );
     } else {
       return null;
     }
   }
-
-  function portToSpotify() {
-    axios.post("http://127.0.0.1:8000/playlist/portToSpotify", {
-      title: titleRef.current?.value,
-      uris: state.map((item: Song) => item.uri),
-    });
-    console.log("request went though");
+  function playlist_options() {
+    return (
+      <div className="mt-3">
+        <Label htmlFor="title">Title</Label>
+        <TextField.Input
+          variant="soft"
+          value={title}
+          onChange={(e) => setTitle(e.currentTarget.value)}
+          type="string"
+          placeholder="Write your title here!"
+        ></TextField.Input>
+        <Label htmlFor="description">Description</Label>
+        <TextArea
+          name="description"
+          ref={descriptRef}
+          id="description"
+          placeholder="Write your description in here!"
+        ></TextArea>
+      </div>
+    );
   }
 
   return (
-    <div className="container" style={{ maxWidth: "900px" }}>
-      <form className="row" onSubmit={handleSubmit}>
-        <div className="input-group mb-3">
-          <input
-            ref={queryRef}
-            type="url"
-            className="form-control"
-            placeholder="put your url here!"
-          />
-          <div className="input-group-append">
-            <button className="btn btn-outline-secondary">Search</button>
-          </div>
-        </div>
+    <>
+      <form className="" onSubmit={handleSubmit}>
+        <Flex gap="2">
+          <Flex grow="1">
+            <Container>
+              <TextField.Input
+                ref={queryRef}
+                type="url"
+                placeholder="put your url here!"
+              ></TextField.Input>
+            </Container>
+          </Flex>
+          <Button>Search</Button>
+        </Flex>
       </form>
-      <div className="row">
-        <div className="col-md-8 col-12">
-          <ul className="list-group">
-            {state.length > 0 ? (
-              <input
-                ref={titleRef}
-                type="text"
-                defaultValue={title}
-                className="form-control-lg mb-2"
-              />
-            ) : null}
-            {all_songs}
-          </ul>
-        </div>
-        {options_column()}
-      </div>
-    </div>
+      {typeof loading === "boolean" ? (
+        <>
+          {playlist_options()}
+          <DisplayTable
+            data={songs}
+            setData={setSongs}
+            dataIds={dataIds}
+            loading={loading}
+          ></DisplayTable>
+          {PortToSpotify()}
+        </>
+      ) : (
+        <></>
+      )}
+    </>
   );
 }

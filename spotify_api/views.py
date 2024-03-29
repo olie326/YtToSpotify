@@ -1,12 +1,21 @@
 from django.shortcuts import render, redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REACT_HOME
 from requests import Request, post
 from django.http import HttpResponse, JsonResponse
 import base64
 import datetime
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+CLIENT_ID=os.getenv("CLIENT_ID")
+CLIENT_SECRET=os.getenv("CLIENT_SECRET")
+REDIRECT_URI=os.getenv("REDIRECT_URI")
+REACT_HOME=os.getenv("REACT_HOME")
+
+print(CLIENT_ID)
 class spotify_auth_request(APIView):
     def get(self, request):
         scope = 'playlist-modify-private playlist-modify-public'

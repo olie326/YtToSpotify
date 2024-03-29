@@ -1,3 +1,4 @@
+import { Button } from "@radix-ui/themes";
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
@@ -9,8 +10,8 @@ export default function TestButton() {
   };
 
   return (
-    <button type="button" className="btn btn-light" onClick={on_click}>
-      click to reauthenticate
-    </button>
+    <Button variant="soft" onClick={on_click}>
+      Reauthenticate
+    </Button>
   );
 }
