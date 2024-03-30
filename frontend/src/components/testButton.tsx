@@ -7,10 +7,15 @@ export default function TestButton() {
   };
 
   return (
-    <div className="max-w-[688px] w-full">
-      <Button variant="soft" size="4" onClick={handleClick} className="w-full">
-        Reauthenticate
-      </Button>
-    </div>
+    // <div className="">
+    <Button
+      variant="soft"
+      size="4"
+      onClick={handleClick}
+      className="max-w-[688px] w-full"
+    >
+      Reauthenticate
+    </Button>
+    // </div>
   );
 }

@@ -9,6 +9,11 @@ export type Song = {
   uri: string;
 };
 
+export type Cover = {
+  file: FileList;
+  url: string;
+};
+
 export const initSong = (
   title: string,
   image_url: string,

@@ -14,19 +14,24 @@ from PIL import Image
 
 
 def yt_scraper(url: str):
-     '''
-     returns a list of songs as [ ('Song title', 'Artist Name'), ... ]
-     '''
-     response = requests.get(url)
-     
-     soup = BeautifulSoup(response.text, 'html.parser')
+    '''
+    returns a list of songs as [ ('Song title', 'Artist Name'), ... ]
+    '''
+    response = requests.get(url)
+    
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-     pattern = re.compile(r'"videoAttributeViewModel":{.*?"title":"(.*?)","subtitle":"(.*?)",', re.MULTILINE | re.DOTALL)
+    pattern = re.compile(r'"videoAttributeViewModel":{.*?"title":"(.*?)","subtitle":"(.*?)",', re.MULTILINE | re.DOTALL)
 
-     title = soup.find('meta', {'name': 'title'})['content']
-     script = soup.find('script', string=pattern)
-     songList = re.findall(pattern, script.text)
-     return title, songList
+    title = soup.find('meta', {'name': 'title'})['content']
+    script = soup.find('script', string=pattern)
+
+    if script:
+        songList = re.findall(pattern, script.text)
+    else:
+        songList = []
+    
+    return title, songList
 
 
 class yt_music_scraper(APIView):
@@ -99,16 +104,17 @@ def create_spotify_playlist(request):
     user_id = requests.get("https://api.spotify.com/v1/me", headers={
         'Authorization': request.session['Authorization']
     }).json().get('id')
+    
+    print(request.session["Authorization"])
 
-    print(user_id)
-    name = str(request.data['title'])
-    description = str(request.data['description'])
-    print(name)
+    name = str(request.data.get('title', ""))
+    description = str(request.data.get('description', ""))
+    # print(name)
     playlist_data = {
         'name': name,
         'public': 'false'
     }
-    print(json.dumps(playlist_data))
+    # print(json.dumps(playlist_data))
     init_playlist = requests.post(f"https://api.spotify.com/v1/users/{user_id}/playlists", json={
         'name': name,
         'description': description,
@@ -117,32 +123,35 @@ def create_spotify_playlist(request):
         'Authorization': request.session['Authorization']
     })
 
-    print(init_playlist.json())
+    
     playlist_id = init_playlist.json().get('id')
 
-    print(playlist_id)
 
-    uris = request.data.get('uris')
 
-    print(uris)
+    uris = json.loads(request.data.get('uris'))
+
     response = requests.post(f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks", json={
         'uris': uris
     }, headers={
         'Authorization': request.session['Authorization']
     })
 
-    cover_url = request.data.get("cover")
-    cover_file = Image.open(cover_url)
-    encoded_cover = b64encode(cover_file)
+    cover_file = request.FILES.get("cover")
 
-    put_cover = requests.put(f"https://api.spotify.com/v1/playlists/{playlist_id}/images", data={
-        encoded_cover
-    }, headers={
-        'Authorization': request.session['Authorization']
-    })
-    print(response.json())
-    print(request.data)
-    return Response(response)
+    if cover_file:
+        cover_file = cover_file.read()
+
+        encoded_cover = b64encode(cover_file)
+
+        put_cover = requests.put(f"https://api.spotify.com/v1/playlists/{playlist_id}/images", 
+            data= encoded_cover, 
+            headers={
+            'Authorization': request.session['Authorization']
+        })
+
+        print(put_cover)
+    
+    return Response(response, status=200)
 
 
 

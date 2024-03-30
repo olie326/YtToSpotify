@@ -18,7 +18,7 @@ REACT_HOME=os.getenv("REACT_HOME")
 print(CLIENT_ID)
 class spotify_auth_request(APIView):
     def get(self, request):
-        scope = 'playlist-modify-private playlist-modify-public'
+        scope = 'playlist-modify-private playlist-modify-public ugc-image-upload'
 
         response_url = Request("GET", "https://accounts.spotify.com/authorize", params={
             'client_id': CLIENT_ID,

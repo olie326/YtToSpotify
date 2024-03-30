@@ -1,4 +1,4 @@
-import { Song } from "@/hooks/GetSongs";
+import { Cover, Song } from "@/hooks/GetSongs";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import axios from "axios";
 
@@ -12,19 +12,24 @@ export async function isAuthenticated() {
   else return false;
 }
 
-export default function portToSpotify(
+export default async function PortToSpotify(
   title: string,
   description: string | undefined,
   uris: UniqueIdentifier[],
-  cover: string | undefined
+  cover: Cover | undefined
 ) {
-  axios.post("http://127.0.0.1:8000/playlist/portToSpotify", {
-    title: title,
-    description: description,
-    uris: uris,
-    cover: cover,
-  });
-  console.log("request went though");
+  let data = new FormData();
+
+  data.append("title", title);
+  if (description) data.append("description", description);
+  data.append("uris", JSON.stringify(uris));
+
+  if (cover?.file) data.append("cover", cover.file[0]);
+
+  const response = (
+    await axios.post("http://127.0.0.1:8000/playlist/portToSpotify", data)
+  ).status;
+  return response;
 }
 
 export const getSongs = async (url: string | undefined) => {

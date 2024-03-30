@@ -19,7 +19,7 @@ export default function DisplayTable({
   return (
     <>
       {typeof loading === "boolean" ? (
-        <Card>
+        <Card className="w-full">
           <SongTable
             data={data}
             setData={setData}
