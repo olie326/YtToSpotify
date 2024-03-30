@@ -5,22 +5,24 @@ import axios from "axios";
 // const BaseUrl = "http://127.0.0.1:8000/";
 
 export async function isAuthenticated() {
-  const authenticated: string = await axios.get(
+  const authenticated = await axios.get(
     "http://127.0.0.1:8000/login/authenticated"
   );
-  if (authenticated === "true") return true;
+  if (authenticated.data.is_authenticated === "true") return true;
   else return false;
 }
 
 export default function portToSpotify(
   title: string,
   description: string | undefined,
-  uris: UniqueIdentifier[]
+  uris: UniqueIdentifier[],
+  cover: string | undefined
 ) {
   axios.post("http://127.0.0.1:8000/playlist/portToSpotify", {
     title: title,
     description: description,
     uris: uris,
+    cover: cover,
   });
   console.log("request went though");
 }
@@ -60,3 +62,14 @@ export const getSongs = async (url: string | undefined) => {
   });
   return [data.title, songs];
 };
+
+export async function auth_redirect() {
+  const redirectUrl = await axios.get("http://127.0.0.1:8000/login/request");
+  if (redirectUrl.data.url) {
+    return redirectUrl.data.url;
+  } else return "";
+}
+
+export async function reauthenticate() {
+  axios.get("http://127.0.0.1:8000/login/reauthenticate");
+}

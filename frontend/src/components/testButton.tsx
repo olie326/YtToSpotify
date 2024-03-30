@@ -1,17 +1,16 @@
-import { Button } from "@radix-ui/themes";
-import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import { reauthenticate } from "@/api/apiConfig";
+import { Button, Container } from "@radix-ui/themes";
 
 export default function TestButton() {
-  const on_click = () => {
-    axios.get("http://127.0.0.1:8000/login/reauthenticate");
-    window.location.reload();
+  const handleClick = () => {
+    reauthenticate().then(() => window.location.reload());
   };
 
   return (
-    <Button variant="soft" onClick={on_click}>
-      Reauthenticate
-    </Button>
+    <div className="max-w-[688px] w-full">
+      <Button variant="soft" size="4" onClick={handleClick} className="w-full">
+        Reauthenticate
+      </Button>
+    </div>
   );
 }

@@ -8,6 +8,8 @@ from rest_framework.response import Response
 import urllib.parse
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from base64 import b64encode
+from PIL import Image
 
 
 
@@ -125,6 +127,16 @@ def create_spotify_playlist(request):
     print(uris)
     response = requests.post(f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks", json={
         'uris': uris
+    }, headers={
+        'Authorization': request.session['Authorization']
+    })
+
+    cover_url = request.data.get("cover")
+    cover_file = Image.open(cover_url)
+    encoded_cover = b64encode(cover_file)
+
+    put_cover = requests.put(f"https://api.spotify.com/v1/playlists/{playlist_id}/images", data={
+        encoded_cover
     }, headers={
         'Authorization': request.session['Authorization']
     })

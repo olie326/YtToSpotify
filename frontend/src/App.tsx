@@ -35,7 +35,7 @@ function App() {
   }, []);
 
   return (
-    <div className="">
+    <>
       <Theme
         accentColor="jade"
         grayColor="gray"
@@ -91,7 +91,7 @@ function App() {
           </Container>
         </div>
       </Theme>
-    </div>
+    </>
   );
 }
 
