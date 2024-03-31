@@ -94,11 +94,10 @@ export const DraggableRow = ({
   };
   return (
     // connect row ref to dnd-kit, apply important styles
-    // <button {...attributes} {...listeners}>
     <TableRow
       ref={setNodeRef}
       style={style}
-      className="hover:bg-stone-100 rounded-lg"
+      className="rounded-lg hover:bg-[var(--accent-3)]"
       {...attributes}
       {...listeners}
     >
@@ -113,7 +112,6 @@ export const DraggableRow = ({
         </TableCell>
       ))}
     </TableRow>
-    // {/* </button> */}
   );
 };
 
@@ -235,3 +233,6 @@ export function SongTable<TData extends Song>({
     </>
   );
 }
+
+// background: rgb(255,229,100);
+// background: radial-gradient(circle, rgba(255,229,100,1) 9%, rgba(255,250,220,1) 69%, rgba(255,252,244,1) 100%);

@@ -20,6 +20,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        grad_background: "rgb(255,241,206)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

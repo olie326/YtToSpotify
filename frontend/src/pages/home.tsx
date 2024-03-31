@@ -18,7 +18,7 @@ import {
   Section,
   Box,
 } from "@radix-ui/themes";
-import { ArrowRightIcon } from "@radix-ui/react-icons";
+import headphones from "../assets/headphones_rotate_md_clr.gif";
 import { isAuthenticated } from "@/api/apiConfig";
 
 axios.defaults.withCredentials = true;
@@ -32,18 +32,27 @@ export default function Home() {
 
   return (
     <Theme
-      accentColor="jade"
+      accentColor="orange"
       grayColor="gray"
       panelBackground="translucent"
       scaling="100%"
       radius="small"
     >
-      <Flex direction="column" className="mx-3 h-svh content-around box-border">
+      <Flex
+        direction="column"
+        //"radial-gradient(circle, rgba(255,229,100,1) 9%, rgba(255,250,220,1) 69%, rgba(255,252,244,1) 100%)",
+        className="min-h-svh content-around box-border bg-grad_background"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,238,195,1) 33%, rgba(255,250,229,1) 77%, rgba(255,254,243,1) 100%)",
+        }}
+      >
         <Nav />
         <Container size="3" className="flex-row justify-center">
           <Flex direction="column" gap="6" align="center">
             <Heading size="9" mb="3" align="center">
               Youtube to Spotify Playlist Converter
+              <img src={headphones} alt="headphones" className="inline mx-3" />
             </Heading>
             <Text as="p" className="mx-3">
               A simple web-tool to convert video-style youtube playlists (videos
@@ -89,7 +98,12 @@ export default function Home() {
             </div>
           </Flex>
         </Container>
-        {/* when authernticated + search button is clicked, display table in seperate container. else nothing*/}
+
+        <Section size="2">
+          <Flex align="center" justify="center">
+            <Text color="amber">Designed and developed by Oliver Lee.</Text>
+          </Flex>
+        </Section>
       </Flex>
     </Theme>
   );

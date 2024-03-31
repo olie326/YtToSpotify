@@ -37,8 +37,8 @@ function App() {
   return (
     <>
       <Theme
-        accentColor="jade"
-        grayColor="gray"
+        accentColor="yellow"
+        grayColor="sand"
         panelBackground="translucent"
         scaling="100%"
         radius="medium"
