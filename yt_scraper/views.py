@@ -23,7 +23,13 @@ def yt_scraper(url: str):
 
     pattern = re.compile(r'"videoAttributeViewModel":{.*?"title":"(.*?)","subtitle":"(.*?)",', re.MULTILINE | re.DOTALL)
 
-    title = soup.find('meta', {'name': 'title'})['content']
+    title = soup.find('meta', {'name': 'title'})
+
+    if title:
+        title = title['content']
+    else:
+        title = ""
+    
     script = soup.find('script', string=pattern)
 
     if script:

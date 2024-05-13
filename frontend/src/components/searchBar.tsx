@@ -35,15 +35,18 @@ export default function SearchBar() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setPorting(portingState.initial);
-    setSongs(placeholder_data);
 
-    const [title, songs] = await getSongs(queryRef.current?.value);
-    console.log(title);
-    setTitle(title);
-    setSongs(songs);
-    setLoading(false);
+    if (queryRef.current?.value) {
+      setLoading(true);
+      setPorting(portingState.initial);
+      setSongs(placeholder_data);
+
+      const [title, songs] = await getSongs(queryRef.current?.value);
+      console.log(title);
+      setTitle(title);
+      setSongs(songs);
+      setLoading(false);
+    }
   };
 
   function ToSpotify() {
